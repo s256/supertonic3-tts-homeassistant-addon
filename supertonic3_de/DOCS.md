@@ -11,9 +11,11 @@ läuft alles offline.
 
 ## In Home Assistant einbinden
 
-1. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Wyoming-Protokoll**
-2. Host: der **Hostname** dieses Add-ons (steht oben auf der Info-Seite des Add-ons, z. B.
-   `e8223149-supertonic3-de`), Port: `10200`
+1. Sobald das Modell geladen ist, meldet sich das Add-on selbst bei Home Assistant (Protokoll:
+   `Discovery an Home Assistant gesendet`). Unter **Einstellungen → Geräte & Dienste** erscheint
+   **Wyoming-Protokoll** als *Entdeckt* → **Konfigurieren** → **Senden**.
+2. Falls nicht: **Integration hinzufügen → Wyoming-Protokoll**, Host ist der **Hostname** dieses
+   Add-ons (steht oben auf der Info-Seite, z. B. `e8223149-supertonic3-de`), Port `10200`.
 3. Die Sprachausgabe erscheint danach als `tts.…` (z. B. `tts.supertonic3`) und kann in
    Assist-Pipelines, mit `tts.speak` oder über `media-source://tts/tts.supertonic3?message=...`
    benutzt werden.

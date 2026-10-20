@@ -39,10 +39,12 @@ Im Einsatz auf einem HP T630 Thin Client (AMD GX-420GI, 4 Kerne, 12 GB RAM).
 2. Im Add-on Store **Supertonic 3 TTS (Deutsch)** öffnen und **Installieren**. Das Add-on wird dabei auf
    dem Gerät gebaut, das dauert ein paar Minuten.
 3. **Starten** und im **Protokoll** warten, bis `server ready` steht (der erste Start lädt das Modell).
-4. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Wyoming-Protokoll**
-   - Host: der **Hostname** des Add-ons (steht auf der Info-Seite des Add-ons, bei der URL oben
-     `e8223149-supertonic3-de`)
-   - Port: `10200`
+4. Sobald das Modell geladen ist, meldet sich das Add-on selbst bei Home Assistant. Unter
+   **Einstellungen → Geräte & Dienste** erscheint **Wyoming-Protokoll** als *Entdeckt* →
+   **Konfigurieren** → **Senden**.
+
+   Falls nicht: **Integration hinzufügen → Wyoming-Protokoll** mit dem **Hostname** des Add-ons (steht
+   auf der Info-Seite des Add-ons, bei der URL oben `e8223149-supertonic3-de`) und Port `10200`.
 5. Die Sprachausgabe ist danach als `tts.…` verfügbar (z. B. `tts.supertonic3`) und kann in
    Assist-Pipelines, mit `tts.speak` oder als `media-source://tts/tts.supertonic3?message=...` benutzt
    werden.
@@ -57,7 +59,7 @@ repository.yaml            Beschreibung des Add-on-Repositorys für den Supervis
 supertonic3_de/
   config.yaml              Add-on-Definition (Optionen, Ports, Architektur)
   Dockerfile               baut auf ghcr.io/marco-taylor/supertonic3-tts-german-wyoming auf
-  run.sh                   liest /data/options.json und startet den Server
+  run.sh                   liest /data/options.json, startet den Server, meldet ihn per Discovery
   DOCS.md                  Dokumentation, wird in Home Assistant angezeigt
 ```
 
