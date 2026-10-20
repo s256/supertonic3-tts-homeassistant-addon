@@ -2,7 +2,7 @@ name: Supertonic 3 TTS (Deutsch)
 version: "1.0.0"
 slug: supertonic3_de
 description: Lokale deutsche Sprachausgabe mit Supertonic 3 über das Wyoming-Protokoll
-url: https://github.com/marco-taylor/supertonic3-tts-german-wyoming
+url: https://github.com/s256/supertonic3-tts-homeassistant-addon
 arch:
   - amd64
 startup: services

@@ -1,5 +1,7 @@
 # Supertonic 3 TTS (Deutsch) – Home Assistant Add-on
 
+[![Repository zu Home Assistant hinzufügen](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fs256%2Fsupertonic3-tts-homeassistant-addon)
+
 Lokale deutsche Sprachausgabe für Home Assistant mit [Supertonic 3](https://huggingface.co/Supertone/supertonic-3),
 angebunden über das Wyoming-Protokoll. Klingt deutlich natürlicher als Piper, macht hörbare Pausen an
 Kommas und läuft komplett lokal auf der CPU.
@@ -15,56 +17,48 @@ Temperaturen, Einheiten usw.). Es ergänzt nur:
 
 ## Voraussetzungen
 
-- Home Assistant OS oder Supervised
-- `amd64` mit AVX2 (prüfen im Terminal-Add-on: `grep -o -m1 avx2 /proc/cpuinfo`)
-- Einmalig Internet: beim Installieren (Image-Build) und beim ersten Start (ca. 380 MB Modell und
-  Stimmen von Hugging Face). Danach läuft alles offline.
+- **Home Assistant OS** (oder Supervised). Add-ons gibt es nur dort, nicht bei Home Assistant Container
+  oder Core. Dort stattdessen das
+  [Upstream-Image](https://github.com/marco-taylor/supertonic3-tts-german-wyoming) direkt mit Docker
+  starten.
+- `amd64`-CPU mit AVX2 (prüfen im Terminal-Add-on: `grep -o -m1 avx2 /proc/cpuinfo`)
+- Einmalig Internet: beim Installieren (das Add-on wird auf dem Gerät gebaut) und beim ersten Start
+  (ca. 380 MB Modell und Stimmen von Hugging Face). Danach läuft alles offline.
 
 Im Einsatz auf einem HP T630 Thin Client (AMD GX-420GI, 4 Kerne, 12 GB RAM).
 
 ## Installation
 
-1. Dieses Repository als Ordner `supertonic3_de` in die Freigabe `addons` von Home Assistant kopieren
-   (z. B. über das Samba-Add-on), sodass `/addons/supertonic3_de/config.yaml` existiert.
-2. **Einstellungen → Add-ons → Add-on Store → ⋮ → Nach Updates suchen**. Das Add-on erscheint unter
-   „Lokale Add-ons".
-3. Installieren und starten. Der erste Start lädt das Modell herunter; fertig ist es, wenn im Protokoll
-   `server ready` steht.
+1. Repository hinzufügen: Button oben klicken, oder manuell unter
+   **Einstellungen → Add-ons → Add-on Store → ⋮ → Repositories** diese URL eintragen:
+
+   ```
+   https://github.com/s256/supertonic3-tts-homeassistant-addon
+   ```
+
+2. Im Add-on Store **Supertonic 3 TTS (Deutsch)** öffnen und **Installieren**. Das Add-on wird dabei auf
+   dem Gerät gebaut, das dauert ein paar Minuten.
+3. **Starten** und im **Protokoll** warten, bis `server ready` steht (der erste Start lädt das Modell).
 4. **Einstellungen → Geräte & Dienste → Integration hinzufügen → Wyoming-Protokoll**
-   - Host: `local-supertonic3-de`
+   - Host: der **Hostname** des Add-ons (steht auf der Info-Seite des Add-ons, bei der URL oben
+     `e8223149-supertonic3-de`)
    - Port: `10200`
+5. Die Sprachausgabe ist danach als `tts.…` verfügbar (z. B. `tts.supertonic3`) und kann in
+   Assist-Pipelines, mit `tts.speak` oder als `media-source://tts/tts.supertonic3?message=...` benutzt
+   werden.
 
-   Alternativ von außerhalb: IP von Home Assistant und Port `10210`.
-5. Die Sprachausgabe heißt danach z. B. `tts.supertonic3` und kann in Assist-Pipelines, mit `tts.speak`
-   oder über `media-source://tts/tts.supertonic3?message=...` benutzt werden.
+Optionen, Hinweise für schwache Hardware und zum Cache stehen in der
+[Dokumentation des Add-ons](supertonic3_de/DOCS.md) (in Home Assistant im Reiter **Dokumentation**).
 
-## Konfiguration
+## Aufbau
 
-| Option | Standard | Bereich | Beschreibung |
-|---|---|---|---|
-| `voice` | `F2` | `F1`–`F5`, `M1`–`M5` | Standardstimme (F = weiblich, M = männlich). Pro Anfrage über die Wyoming-Stimmenauswahl änderbar. |
-| `speed` | `1.0` | `0.8`–`1.2` | Sprechgeschwindigkeit |
-| `steps` | `5` | `5`–`12` | Rechenschritte. Mehr = etwas bessere Qualität, aber langsamer. |
-| `threads` | `4` | `1`–`4` | CPU-Threads für die Synthese |
-| `streaming` | `false` | | `true`: Ausgabe beginnt, bevor der ganze Text fertig ist. `false`: erst komplett erzeugen, dann am Stück abspielen. |
-| `prefill_ms` | `3500` | `0`–`5000` | Nur bei `streaming: true`: so viel Audio wird vorab erzeugt, bevor die Wiedergabe beginnt. |
-| `german_normalization` | `true` | | Zahlen, Einheiten, Uhrzeiten usw. ausschreiben |
-
-### Schwache Hardware
-
-Auf langsamen CPUs (Thin Clients, ältere Mini-PCs) kann die Ausgabe mit Streaming stocken, weil die
-Synthese nicht schnell genug nachkommt. Deshalb ist `streaming: false` voreingestellt: Die Ansage
-beginnt etwas später, läuft dann aber ohne Lücken. Für lange Texte ist `streaming: true` mit
-`prefill_ms: 5000` ein Mittelweg.
-
-### Cache
-
-Home Assistant speichert erzeugte Ansagen (bei `cache: true`) unter `/config/tts` und spielt gleiche
-Texte danach sofort ab. Der Cache kennt die Add-on-Einstellungen nicht: Nach einer Änderung von Stimme,
-`speed` oder `steps` den Cache leeren, sonst kommen weiter die alten Aufnahmen:
-
-```yaml
-action: tts.clear_cache
+```
+repository.yaml            Beschreibung des Add-on-Repositorys für den Supervisor
+supertonic3_de/
+  config.yaml              Add-on-Definition (Optionen, Ports, Architektur)
+  Dockerfile               baut auf ghcr.io/marco-taylor/supertonic3-tts-german-wyoming auf
+  run.sh                   liest /data/options.json und startet den Server
+  DOCS.md                  Dokumentation, wird in Home Assistant angezeigt
 ```
 
 ## Lizenzen
