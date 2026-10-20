@@ -1,0 +1,10 @@
+# Lokale Testdaten (z. B. ein nach /data gemountetes Verzeichnis beim Testen mit Docker/Podman)
+/data/
+*.wav
+
+# Editor und Betriebssystem
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store

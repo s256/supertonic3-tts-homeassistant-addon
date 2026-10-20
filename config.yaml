@@ -1,0 +1,29 @@
+name: Supertonic 3 TTS (Deutsch)
+version: "1.0.0"
+slug: supertonic3_de
+description: Lokale deutsche Sprachausgabe mit Supertonic 3 über das Wyoming-Protokoll
+url: https://github.com/marco-taylor/supertonic3-tts-german-wyoming
+arch:
+  - amd64
+startup: services
+boot: auto
+ports:
+  10200/tcp: 10210
+ports_description:
+  10200/tcp: Wyoming TTS
+options:
+  voice: F2
+  speed: 1.0
+  steps: 5
+  threads: 4
+  streaming: false
+  prefill_ms: 3500
+  german_normalization: true
+schema:
+  voice: str
+  speed: float(0.8,1.2)
+  steps: int(5,12)
+  threads: int(1,4)
+  streaming: bool
+  prefill_ms: int(0,5000)
+  german_normalization: bool
